@@ -1,0 +1,39 @@
+# Example Terraform variables file for Azure Federated Identity configuration
+# Copy this file to terraform.tfvars and update with your values
+
+subscription_id = "00000000-0000-0000-0000-000000000000"
+tenant_id       = "00000000-0000-0000-0000-000000000000"
+
+location            = "eastus"
+resource_group_name = "rg-github-actions"
+identity_name       = "id-github-actions"
+application_name    = "GitHub Actions OIDC"
+
+# GitHub repository in format "owner/repo"
+github_repo = "MikeDominic92/keyless-kingdom"
+
+# GitHub environments to create federated credentials for
+github_environments = ["production", "staging"]
+
+# Enable federated credentials for different scenarios
+enable_pull_request_access = true
+enable_develop_branch      = false
+
+# Role assignments
+enable_contributor_access   = false
+enable_storage_access       = true
+enable_reader_access        = true
+enable_acr_access          = false
+enable_app_service_access  = false
+
+# Optional: Scope role assignments to a specific resource group
+# Leave empty to scope to subscription
+role_assignment_scope = ""
+
+# Tags
+tags = {
+  Owner     = "MikeDominic92"
+  Team      = "DevOps"
+  Project   = "KeylessKingdom"
+  ManagedBy = "Terraform"
+}

@@ -1,0 +1,134 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/gcp/**'
+      - 'examples/gcs-deploy/**'
+      - '.github/workflows/deploy-gcp.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'terraform/gcp/**'
+      - 'examples/gcs-deploy/**'
+  workflow_dispatch:
+
+# Required permissions for OIDC
+permissions:
+  id-token: write   # Required for requesting JWT
+  contents: read    # Required for actions/checkout
+
+env:
+  GCP_REGION: us-central1
+  # Replace with your values after deploying terraform/gcp
+  WORKLOAD_IDENTITY_PROVIDER: projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+  SERVICE_ACCOUNT: github-actions@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+
+jobs:
+  validate-terraform:
+    name: Validate Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Format Check
+        working-directory: terraform/gcp
+        run: terraform fmt -check -recursive
+
+      - name: Terraform Init
+        working-directory: terraform/gcp
+        run: terraform init -backend=false
+
+      - name: Terraform Validate
+        working-directory: terraform/gcp
+        run: terraform validate
+
+  deploy:
+    name: Deploy to GCP
+    runs-on: ubuntu-latest
+    needs: validate-terraform
+    # Only deploy on push to main, not PRs
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud using OIDC
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+          token_format: 'access_token'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Verify GCP identity
+        run: |
+          echo "Verifying GCP credentials..."
+          gcloud auth list
+          gcloud config list
+          echo "Successfully authenticated to GCP using Workload Identity!"
+
+      - name: Get project information
+        run: |
+          echo "Project ID: $(gcloud config get-value project)"
+          echo "Account: $(gcloud config get-value account)"
+
+      - name: List GCS buckets (example)
+        run: |
+          echo "Listing GCS buckets to verify permissions..."
+          gcloud storage buckets list || echo "No GCS buckets found or insufficient permissions"
+
+  test-deployment:
+    name: Test GCS Deployment
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud using OIDC
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Create test file
+        run: |
+          echo "Test file created by GitHub Actions using Workload Identity" > test-file.txt
+          echo "Timestamp: $(date)" >> test-file.txt
+          echo "Run ID: ${{ github.run_id }}" >> test-file.txt
+
+      - name: Test GCS upload (if bucket exists)
+        continue-on-error: true
+        run: |
+          PROJECT_ID=$(gcloud config get-value project)
+          BUCKET_NAME="keyless-kingdom-deploy-test-${PROJECT_ID}"
+          echo "Testing upload to bucket: $BUCKET_NAME"
+
+          # Check if bucket exists
+          if gcloud storage buckets describe "gs://$BUCKET_NAME" 2>/dev/null; then
+            gcloud storage cp test-file.txt "gs://$BUCKET_NAME/github-actions-test.txt"
+            echo "Successfully uploaded test file to GCS"
+          else
+            echo "Test bucket does not exist. Skipping upload test."
+            echo "To enable this test, create a bucket named: $BUCKET_NAME"
+          fi
+
+      - name: Cleanup
+        run: rm -f test-file.txt

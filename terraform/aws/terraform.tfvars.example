@@ -1,0 +1,26 @@
+# Example Terraform variables file for AWS OIDC configuration
+# Copy this file to terraform.tfvars and update with your values
+
+aws_region = "us-east-1"
+environment = "dev"
+
+# Your GitHub repository in the format "owner/repo"
+github_repo = "MikeDominic92/keyless-kingdom"
+
+# IAM role name for GitHub Actions
+github_actions_role_name = "github-actions-role"
+
+# Prefix for S3 buckets that can be accessed
+deployment_bucket_prefix = "keyless-kingdom-deploy"
+
+# Set to true to attach ReadOnlyAccess policy (useful for testing)
+enable_readonly_access = false
+
+# Set to true to create a separate production role
+create_prod_role = false
+
+# Additional tags
+tags = {
+  Owner = "MikeDominic92"
+  Team  = "DevOps"
+}

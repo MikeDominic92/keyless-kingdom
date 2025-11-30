@@ -1,0 +1,33 @@
+# Example Terraform variables file for GCP Workload Identity configuration
+# Copy this file to terraform.tfvars and update with your values
+
+project_id = "your-gcp-project-id"
+region     = "us-central1"
+
+# Workload Identity Pool and Provider IDs
+workload_identity_pool_id     = "github-pool"
+workload_identity_provider_id = "github-provider"
+
+# Service Account ID
+service_account_id = "github-actions"
+
+# GitHub organization/user and repository
+github_org  = "MikeDominic92"
+github_repo = "MikeDominic92/keyless-kingdom"
+
+# GCS bucket prefix for deployments
+deployment_bucket_prefix = "keyless-kingdom-deploy"
+
+# Enable/disable various permissions
+enable_storage_access           = true
+enable_artifact_registry_access = false
+enable_cloud_run_access        = false
+enable_cloud_build_access      = false
+enable_viewer_access           = false
+
+# Labels for resources
+labels = {
+  owner      = "mikedominic92"
+  team       = "devops"
+  managed_by = "terraform"
+}

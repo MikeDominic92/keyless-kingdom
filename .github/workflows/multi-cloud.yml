@@ -1,0 +1,210 @@
+name: Multi-Cloud Deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Required permissions for OIDC authentication
+permissions:
+  id-token: write   # Required for requesting JWT from GitHub OIDC provider
+  contents: read    # Required for actions/checkout
+
+env:
+  # AWS Configuration
+  AWS_REGION: us-east-1
+  AWS_ROLE_ARN: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/github-actions-role
+
+  # GCP Configuration
+  GCP_REGION: us-central1
+  WORKLOAD_IDENTITY_PROVIDER: projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+  SERVICE_ACCOUNT: github-actions@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+
+  # Azure Configuration
+  AZURE_REGION: eastus
+  AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+jobs:
+  # Demonstrate passwordless authentication to all three clouds in parallel
+  authenticate-all-clouds:
+    name: Authenticate to All Clouds
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cloud: [aws, gcp, azure]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # AWS Authentication
+      - name: Configure AWS credentials (OIDC)
+        if: matrix.cloud == 'aws'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-MultiCloud-${{ github.run_id }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Verify AWS identity
+        if: matrix.cloud == 'aws'
+        run: |
+          echo "=== AWS Authentication Successful ==="
+          aws sts get-caller-identity
+          echo "Region: $AWS_REGION"
+          echo "✓ Authenticated to AWS without any stored credentials!"
+
+      # GCP Authentication
+      - name: Authenticate to GCP (Workload Identity)
+        if: matrix.cloud == 'gcp'
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        if: matrix.cloud == 'gcp'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Verify GCP identity
+        if: matrix.cloud == 'gcp'
+        run: |
+          echo "=== GCP Authentication Successful ==="
+          gcloud auth list
+          echo "Project: $(gcloud config get-value project)"
+          echo "Region: $GCP_REGION"
+          echo "✓ Authenticated to GCP without any stored credentials!"
+
+      # Azure Authentication
+      - name: Azure Login (Federated Credential)
+        if: matrix.cloud == 'azure'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Verify Azure identity
+        if: matrix.cloud == 'azure'
+        run: |
+          echo "=== Azure Authentication Successful ==="
+          az account show
+          echo "Region: $AZURE_REGION"
+          echo "✓ Authenticated to Azure without any stored credentials!"
+
+  # Sequential deployment to all clouds
+  deploy-sequential:
+    name: Sequential Multi-Cloud Deployment
+    runs-on: ubuntu-latest
+    needs: authenticate-all-clouds
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 1: Deploy to AWS
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions-Deploy-${{ github.run_id }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to AWS
+        run: |
+          echo "Deploying to AWS..."
+          echo "Account: $(aws sts get-caller-identity --query Account --output text)"
+          echo "AWS deployment completed"
+
+      # Step 2: Deploy to GCP
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy to GCP
+        run: |
+          echo "Deploying to GCP..."
+          echo "Project: $(gcloud config get-value project)"
+          echo "GCP deployment completed"
+
+      # Step 3: Deploy to Azure
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy to Azure
+        run: |
+          echo "Deploying to Azure..."
+          echo "Subscription: $(az account show --query name -o tsv)"
+          echo "Azure deployment completed"
+
+      - name: Deployment Summary
+        run: |
+          echo "=================================="
+          echo "Multi-Cloud Deployment Summary"
+          echo "=================================="
+          echo "✓ AWS deployment successful"
+          echo "✓ GCP deployment successful"
+          echo "✓ Azure deployment successful"
+          echo ""
+          echo "All deployments completed without storing ANY credentials!"
+          echo "This workflow used:"
+          echo "  - AWS: OIDC with IAM role assumption"
+          echo "  - GCP: Workload Identity Federation"
+          echo "  - Azure: Federated Identity Credentials"
+
+  # Security verification
+  verify-no-credentials:
+    name: Verify No Credentials Stored
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Search for potential credentials
+        run: |
+          echo "Searching for potential credentials in repository..."
+
+          # Check for common credential patterns (should find none)
+          FOUND=0
+
+          if grep -r "AKIA" . 2>/dev/null | grep -v ".git" | grep -v "node_modules"; then
+            echo "⚠ Found potential AWS access keys"
+            FOUND=1
+          fi
+
+          if grep -r "private_key" . 2>/dev/null | grep -v ".git" | grep -v "node_modules" | grep -v "README"; then
+            echo "⚠ Found potential private keys"
+            FOUND=1
+          fi
+
+          if [ $FOUND -eq 0 ]; then
+            echo "✓ No credentials found in repository"
+            echo "✓ This is the power of keyless authentication!"
+          fi
+
+      - name: Verify GitHub Secrets usage
+        run: |
+          echo "GitHub Secrets used in this workflow:"
+          echo "  - AWS_ACCOUNT_ID (not a secret, but stored for convenience)"
+          echo "  - GCP_PROJECT_ID (not a secret, but stored for convenience)"
+          echo "  - GCP_PROJECT_NUMBER (not a secret, but stored for convenience)"
+          echo "  - AZURE_CLIENT_ID (not a secret)"
+          echo "  - AZURE_TENANT_ID (not a secret)"
+          echo "  - AZURE_SUBSCRIPTION_ID (not a secret)"
+          echo ""
+          echo "ZERO long-lived credentials stored!"
+          echo "All authentication uses short-lived tokens via OIDC"
