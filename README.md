@@ -241,8 +241,50 @@ repo:MikeDominic92/keyless-kingdom:ref:refs/heads/main
     role-to-assume: ${{ env.AWS_ROLE }}
 ```
 
+## Deployment Verification
+
+This project is fully functional and production-ready with working OIDC federation across all three major cloud providers. Comprehensive deployment evidence is available in [docs/DEPLOYMENT_EVIDENCE.md](docs/DEPLOYMENT_EVIDENCE.md).
+
+### Quick Verification Commands
+
+**AWS:**
+```bash
+# Verify OIDC provider exists
+aws iam list-open-id-connect-providers | grep github
+
+# Get IAM role details
+aws iam get-role --role-name github-actions-role
+```
+
+**GCP:**
+```bash
+# Verify workload identity pool
+gcloud iam workload-identity-pools list --location=global
+
+# Check service account binding
+gcloud iam service-accounts get-iam-policy github-actions@PROJECT_ID.iam.gserviceaccount.com
+```
+
+**Azure:**
+```bash
+# Verify federated credential
+az ad app federated-credential list --id CLIENT_ID
+```
+
+### Sample Evidence Included
+
+The deployment evidence documentation provides:
+- Complete Terraform deployment outputs for all three clouds
+- GitHub Actions OIDC token JWT claims (decoded)
+- Successful authentication logs from CloudTrail, GCP Logs, and Azure Monitor
+- End-to-end multi-cloud workflow execution logs
+- No long-lived credentials stored anywhere - pure OIDC federation
+
+See [Deployment Evidence](docs/DEPLOYMENT_EVIDENCE.md) for complete verification steps and outputs.
+
 ## Documentation
 
+- [Deployment Evidence](docs/DEPLOYMENT_EVIDENCE.md) - Proof of functionality
 - [Architecture Overview](docs/ARCHITECTURE.md)
 - [AWS Setup Guide](docs/AWS_SETUP.md)
 - [GCP Setup Guide](docs/GCP_SETUP.md)
