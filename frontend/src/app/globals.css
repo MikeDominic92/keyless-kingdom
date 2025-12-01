@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+@theme {
+    /* Colors */
+    --color-background: #09090B;
+    --color-foreground: #FAFAFA;
+
+    --color-void-black: #09090B;
+    --color-void-obsidian: #18181B;
+
+    --color-royal-purple: #6366F1;
+    --color-royal-glow: rgba(99, 102, 241, 0.5);
+
+    --color-indigo-depth: #4F46E5;
+    --color-indigo-glow: rgba(79, 70, 229, 0.5);
+
+    --color-aws-orange: #FF9900;
+    --color-gcp-blue: #4285F4;
+    --color-azure-blue: #0078D4;
+
+    --color-success-emerald: #10B981;
+    --color-success-glow: rgba(16, 185, 129, 0.5);
+
+    --color-warning-amber: #F59E0B;
+    --color-warning-glow: rgba(245, 158, 11, 0.5);
+
+    --color-text-primary: #FAFAFA;
+    --color-text-secondary: #71717A;
+    --color-text-muted: #52525B;
+
+    /* Fonts */
+    --font-cal-sans: 'Cal Sans', sans-serif;
+    --font-inter: 'Inter', sans-serif;
+    --font-fira-code: 'Fira Code', monospace;
+
+    /* Shadows */
+    --shadow-glow-royal: 0 0 10px rgba(99, 102, 241, 0.3), 0 0 2px rgba(99, 102, 241, 0.5);
+    --shadow-glow-indigo: 0 0 10px rgba(79, 70, 229, 0.3), 0 0 2px rgba(79, 70, 229, 0.5);
+    --shadow-glow-success: 0 0 10px rgba(16, 185, 129, 0.3), 0 0 2px rgba(16, 185, 129, 0.5);
+    --shadow-glass: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+
+    /* Background Images */
+    --image-grid-pattern: radial-gradient(circle, #27272A 1px, transparent 1px);
+    --image-gradient-void: linear-gradient(to bottom right, #09090B, #18181B);
+
+    /* Animations */
+    --animate-flow: flow 20s linear infinite;
+    --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+    @keyframes flow {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+}
+
+/* Custom Font */
+@font-face {
+    font-family: 'Cal Sans';
+    src: url('./fonts/CalSans-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Custom Utilities */
+@utility glass-panel {
+    @apply bg-void-obsidian/40 backdrop-blur-sm border border-white/5;
+}
+
+@utility royal-border {
+    @apply border border-royal-purple/30 shadow-glow-royal;
+}
+
+@utility text-glow {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* Base Styles */
+body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-inter);
+    background-image: radial-gradient(circle at 50% 50%, #18181B 0%, #09090B 100%);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-cal-sans);
+    letter-spacing: -0.02em;
+}
+
+code,
+pre {
+    font-family: var(--font-fira-code);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #09090B;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #27272A;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #3F3F46;
+}

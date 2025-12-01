@@ -282,8 +282,29 @@ The deployment evidence documentation provides:
 
 See [Deployment Evidence](docs/DEPLOYMENT_EVIDENCE.md) for complete verification steps and outputs.
 
+## Frontend Dashboard
+
+A modern React/Next.js frontend is available with a royal dark stealth aesthetic:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend will open at `http://localhost:3000`
+
+**Frontend Screenshots:**
+
+| Dashboard | Provider Config | Security Audit |
+|-----------|----------------|----------------|
+| ![Dashboard](docs/screenshots/dashboard_1764617804714.png) | ![Config](docs/screenshots/config_1764617824746.png) | ![Audit](docs/screenshots/audit_1764617864177.png) |
+
+See [Frontend Walkthrough](docs/FRONTEND_WALKTHROUGH.md) for full documentation.
+
 ## Documentation
 
+- [Frontend Walkthrough](docs/FRONTEND_WALKTHROUGH.md) - Dashboard guide
 - [Deployment Evidence](docs/DEPLOYMENT_EVIDENCE.md) - Proof of functionality
 - [Architecture Overview](docs/ARCHITECTURE.md)
 - [AWS Setup Guide](docs/AWS_SETUP.md)
