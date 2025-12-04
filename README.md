@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/screenshots/dashboard_1764617804714.png" alt="Keyless Kingdom" width="800"/>
+  <img src="docs/images/federation-overview-new.png" alt="Keyless Kingdom" width="800"/>
 </p>
 
 <h1 align="center">Keyless Kingdom</h1>
@@ -63,7 +63,7 @@ Modern Zero Trust CI/CD requires:
 ## The Solution: Keyless Kingdom
 
 <p align="center">
-  <img src="docs/screenshots/config_1764617824746.png" alt="Provider Configuration" width="800"/>
+  <img src="docs/images/provider-config-new.png" alt="Provider Configuration" width="800"/>
 </p>
 
 Complete workload identity federation across all major cloud providers:
@@ -86,12 +86,12 @@ Complete workload identity federation across all major cloud providers:
 <table>
 <tr>
 <td align="center" width="33%">
-<img src="docs/screenshots/dashboard_1764617804714.png" alt="Dashboard"/>
+<img src="docs/images/federation-overview-new.png" alt="Dashboard"/>
 <br/><strong>Federation Dashboard</strong>
 <br/>Royal dark stealth theme
 </td>
 <td align="center" width="33%">
-<img src="docs/screenshots/config_1764617824746.png" alt="Config"/>
+<img src="docs/images/provider-config-new.png" alt="Config"/>
 <br/><strong>Provider Configuration</strong>
 <br/>Multi-cloud setup
 </td>
