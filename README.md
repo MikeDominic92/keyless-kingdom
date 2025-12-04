@@ -96,7 +96,7 @@ Complete workload identity federation across all major cloud providers:
 <br/>Multi-cloud setup
 </td>
 <td align="center" width="33%">
-<img src="docs/screenshots/workflow_1764617844598.png" alt="Workflow"/>
+<img src="docs/images/workflow-new.png" alt="Workflow"/>
 <br/><strong>Workflow Status</strong>
 <br/>GitHub Actions integration
 </td>
@@ -108,12 +108,12 @@ Complete workload identity federation across all major cloud providers:
 <table>
 <tr>
 <td align="center" width="50%">
-<img src="docs/screenshots/audit_1764617864177.png" alt="Audit"/>
+<img src="docs/images/audit-new.png" alt="Audit"/>
 <br/><strong>Security Audit</strong>
 <br/>Cross-cloud audit logs
 </td>
 <td align="center" width="50%">
-<img src="docs/screenshots/architecture_1764617886966.png" alt="Architecture"/>
+<img src="docs/images/architecture-new.png" alt="Architecture"/>
 <br/><strong>Architecture View</strong>
 <br/>Federation flow diagram
 </td>
