@@ -464,12 +464,28 @@ repo:MikeDominic92/keyless-kingdom:ref:refs/heads/main
 
 **Mike Dominic**
 - GitHub: [@MikeDominic92](https://github.com/MikeDominic92)
-- Focus: DevSecOps + Zero Trust CI/CD
+- Focus: Zero Trust Architecture, Supply Chain Security, OIDC Federation
+
+---
+
+## Chainguard IT Engineer (Identity/IAM) Alignment
+
+This project demonstrates key competencies for senior IAM engineering roles:
+
+| Requirement | Evidence |
+|-------------|----------|
+| Zero Trust architecture (AWS, GCP, Azure) | Multi-cloud workload identity federation |
+| Supply chain security | Sigstore/Cosign keyless signing in `chainguard/` |
+| OIDC/SAML expertise | GitHub Actions OIDC token exchange |
+| No standing credentials | Short-lived tokens, automatic rotation |
+| Infrastructure as Code | Terraform modules for all providers |
+
+See also: `chainguard/README.md` for Chainguard Images and Sigstore integration patterns.
 
 ---
 
 <p align="center">
-  <strong>Built with security in mind. No keys, no secrets, no compromises.</strong>
+  <strong>Zero Trust Workload Identity Federation - No Keys, No Secrets</strong>
   <br/>
-  <sub>This is a portfolio project demonstrating production-ready workload identity federation patterns.</sub>
+  <sub>Demonstrates OIDC Federation, Keyless Signing, and Supply Chain Security</sub>
 </p>
