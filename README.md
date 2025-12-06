@@ -10,7 +10,7 @@
   <img src="https://img.shields.io/badge/AWS-OIDC_Provider-FF9900.svg" alt="AWS"/>
   <img src="https://img.shields.io/badge/GCP-Workload_Identity-4285F4.svg" alt="GCP"/>
   <img src="https://img.shields.io/badge/Azure-Federated_Creds-0078D4.svg" alt="Azure"/>
-  <img src="https://img.shields.io/badge/version-1.0.0-purple.svg" alt="Version"/>
+  <img src="https://img.shields.io/badge/version-1.1.0-purple.svg" alt="Version"/>
 </p>
 
 <p align="center">
