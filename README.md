@@ -10,12 +10,44 @@
   <img src="https://img.shields.io/badge/AWS-OIDC_Provider-FF9900.svg" alt="AWS"/>
   <img src="https://img.shields.io/badge/GCP-Workload_Identity-4285F4.svg" alt="GCP"/>
   <img src="https://img.shields.io/badge/Azure-Federated_Creds-0078D4.svg" alt="Azure"/>
+  <img src="https://img.shields.io/badge/Sigstore-Cosign-blueviolet.svg" alt="Cosign"/>
+  <img src="https://img.shields.io/badge/SLSA-Level_3-success.svg" alt="SLSA"/>
   <img src="https://img.shields.io/badge/version-1.1.0-purple.svg" alt="Version"/>
+  <img src="https://img.shields.io/badge/credentials-ZERO-brightgreen.svg" alt="Zero Credentials"/>
 </p>
 
 <p align="center">
   <strong>Production-ready workload identity federation across AWS, GCP, and Azure using OpenID Connect - eliminating long-lived credentials entirely</strong>
 </p>
+
+---
+
+## Key Results & Impact
+
+<table>
+<tr>
+<td align="center" width="25%">
+<h3>0</h3>
+<strong>Stored Credentials</strong>
+<br/>100% keyless
+</td>
+<td align="center" width="25%">
+<h3>3</h3>
+<strong>Cloud Providers</strong>
+<br/>AWS, GCP, Azure
+</td>
+<td align="center" width="25%">
+<h3>< 1 hour</h3>
+<strong>Token Lifetime</strong>
+<br/>Auto-rotating
+</td>
+<td align="center" width="25%">
+<h3>< 5 min</h3>
+<strong>Deployment Time</strong>
+<br/>Per cloud provider
+</td>
+</tr>
+</table>
 
 ---
 
